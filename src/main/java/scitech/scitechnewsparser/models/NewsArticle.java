@@ -19,12 +19,13 @@ public class NewsArticle {
     private Long id;
 
     private String title;
+    @Column(unique = true)
     private String url;
     private LocalDate publishDate;
     private String imageUrl;
+    @Lob
     private String htmlContent;
-
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
-    private List<NewsContentBlock> contentBlocks;
+    @Lob
+    private String contentBlocks;
 
 }

@@ -7,93 +7,93 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import scitech.scitechnewsparser.models.BlockType;
 import scitech.scitechnewsparser.models.NewsArticle;
-import scitech.scitechnewsparser.models.NewsContentBlock;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class NewsParserService {
 
-    @Autowired
-    private RestTemplate restTemplate;
 
-    public List<NewsArticle> parseNewsList(String url) {
-        String html = restTemplate.getForObject(url, String.class);
-        Document doc = Jsoup.parse(html);
+    public List<NewsArticle> parseNewsList(String url, int numOfStates)  {
 
+        Document doc2 = null;
+        try {
+            doc2 = Jsoup.connect(url).get();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        //<section class="u-news-section">
+        //     <div class="u-g-container">
         List<NewsArticle> articles = new ArrayList<>();
 
-        Elements newsItems = doc.select(".u-news-list .u-news-card");
-        for (Element item : newsItems) {
-            NewsArticle article = new NewsArticle();
+        Elements links = doc2.select("section.u-news-section a.news-item");
 
-            article.setTitle(item.select(".u-news-card__title").text());
-            article.setUrl(item.attr("href"));
-            article.setPublishDate(parseDate(item.select(".u-news-card__date").text()));
+        for (Element link : links) {
+            try {
+                // Получаем URL ссылки
+                String href = link.attr("abs:href"); // abs:href даст абсолютный URL
 
-            Element img = item.select(".u-news-card__image").first();
-            if (img != null) {
-                article.setImageUrl(img.attr("src"));
+                Element info = link.child(0).child(0);
+                Element infodiv = info.select("div.news-item__info").first();
+                String date = infodiv.child(0).text();
+                NewsArticle article = new NewsArticle();
+                article.setTitle(link.select(".u-news-card__title").text());
+                article.setUrl(link.attr("href"));
+                article.setPublishDate(parseDate(date));
+
+                article.setHtmlContent( parseFullArticle(href));
+//                article.setContentBlocks(fullArticle);
+
+                articles.add(article);
+
+            } catch (IOException e) {
+                System.err.println("Ошибка при переходе по ссылке: " + link.attr("href"));
+                e.printStackTrace();
             }
-
-            NewsArticle fullArticle = parseFullArticle(article.getUrl());
-            article.setContentBlocks(fullArticle.getContentBlocks());
-
-            articles.add(article);
         }
 
         return articles;
     }
 
-    private NewsArticle parseFullArticle(String articleUrl) {
-        String html = restTemplate.getForObject(articleUrl, String.class);
-        Document doc = Jsoup.parse(html);
+    private String parseFullArticle(String articleUrl) throws IOException {
 
-        NewsArticle article = new NewsArticle();
-        List<NewsContentBlock> blocks = new ArrayList<>();
+        Document doc = Jsoup.connect(articleUrl).get();
+        String title = doc.title();
+        System.out.println("Заголовок страницы: " + title);
 
-        Element content = doc.select(".u-news-detail-page__text-content").first();
-        if (content != null) {
-            for (Element child : content.children()) {
-                NewsContentBlock block = parseContentBlock(child);
-                if (block != null) {
-                    blocks.add(block);
-                }
-            }
-        }
 
-        article.setContentBlocks(blocks);
-        return article;
-    }
+        Element content = doc.select("section.content-section").first();
+        Element textContent = content.select("div.u-news-detail-page__text-content").first();
+        String text = textContent.outerHtml();
+        System.out.printf("svo");
+//        String result = text.replace("\"\\", "");
+//        result = result.replace("\"\"", "");
+//        // Удаляем переносы строк (\n)
+//        result = result.replace("\n", "");
+        String cleanedText = text.replace("\\", "");
+         cleanedText = cleanedText.replace("<br>", "<br />");
 
-    private NewsContentBlock parseContentBlock(Element element) {
-        NewsContentBlock block = new NewsContentBlock();
 
-        if (element.tagName().equals("p")) {
-            block.setType(BlockType.TEXT);
-            block.setContent(element.html());
-        }
-        else if (element.tagName().equals("b") || element.tagName().equals("h3")) {
-            block.setType(BlockType.HEADER);
-            block.setContent(element.html());
-        }
-        else if (element.hasClass("img-wyz")) {
-            block.setType(BlockType.IMAGE);
-            Element img = element.select("img").first();
-            if (img != null) {
-                block.setImageUrl(img.attr("src"));
-                block.setImageAlignment(element.hasClass("img-wyz--left") ? "left" :
-                        element.hasClass("img-wyz--right") ? "right" : "none");
-            }
-        }
-        return block;
+
+
+//        return HtmlWyzConverter.convertImgWyzTags(text);
+        return cleanedText;
+//        return article;
     }
 
     private LocalDate parseDate(String dateStr) {
-        return LocalDate.parse(dateStr);
+        DateTimeFormatter formatter = DateTimeFormatter
+                .ofPattern("d MMMM yyyy", new Locale("ru"));
+
+        LocalDate date = LocalDate.parse(dateStr, formatter);
+
+        return date;
     }
+
 }

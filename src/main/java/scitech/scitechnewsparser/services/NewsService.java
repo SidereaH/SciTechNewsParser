@@ -4,9 +4,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import scitech.scitechnewsparser.models.NewsArticle;
-import scitech.scitechnewsparser.models.NewsContentBlock;
 import scitech.scitechnewsparser.repositories.NewsArticleRepository;
-import scitech.scitechnewsparser.repositories.NewsContentBlockRepository;
 
 import java.util.List;
 
@@ -17,9 +15,7 @@ public class NewsService {
     private NewsArticleRepository articleRepository;
 
     @Autowired
-    private NewsContentBlockRepository blockRepository;
-    @Autowired
-    private HtmlGeneratorService htmlGenerator;
+    private HtmlWyzConverter htmlConv;
 
     @Transactional
     public void saveArticles(List<NewsArticle> articles) {
@@ -29,16 +25,11 @@ public class NewsService {
                 continue;
             }
 
-            String html = htmlGenerator.generateHtml(article);
-            article.setHtmlContent(html);
+//            String html = htmlGenerator.generateHtml(article);
+//            article.setHtmlContent(html);
             articleRepository.save(article);
 
-            if (article.getContentBlocks() != null) {
-                for (NewsContentBlock block : article.getContentBlocks()) {
-                    block.setArticle(article);
-                    blockRepository.save(block);
-                }
-            }
+
         }
     }
 

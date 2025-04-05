@@ -2,7 +2,6 @@ package scitech.scitechnewsparser.services;
 
 import org.springframework.stereotype.Service;
 import scitech.scitechnewsparser.models.NewsArticle;
-import scitech.scitechnewsparser.models.NewsContentBlock;
 
 import java.time.LocalDate;
 
@@ -26,9 +25,9 @@ public class HtmlGeneratorService {
 
         html.append("<div class=\"article-content\">");
 
-        for (NewsContentBlock block : article.getContentBlocks()) {
-            html.append(generateBlockHtml(block));
-        }
+//        for (NewsContentBlock block : article.getContentBlocks()) {
+//            html.append(generateBlockHtml(block));
+//        }
 
         html.append("</div>");
         html.append("</article>");
@@ -36,21 +35,21 @@ public class HtmlGeneratorService {
         return html.toString();
     }
 
-    private String generateBlockHtml(NewsContentBlock block) {
-        switch (block.getType()) {
-            case TEXT:
-                return "<p>" + block.getContent() + "</p>";
-            case HEADER:
-                return "<h3>" + block.getContent() + "</h3>";
-            case IMAGE:
-                return String.format("<div class=\"article-image image-%s\"><img src=\"%s\" alt=\"\"></div>",
-                        block.getImageAlignment(), block.getImageUrl());
-            case QUOTE:
-                return "<blockquote>" + block.getContent() + "</blockquote>";
-            default:
-                return "";
-        }
-    }
+//    private String generateBlockHtml(NewsContentBlock block) {
+//        switch (block.getType()) {
+//            case TEXT:
+//                return "<p>" + block.getContent() + "</p>";
+//            case HEADER:
+//                return "<h3>" + block.getContent() + "</h3>";
+//            case IMAGE:
+//                return String.format("<div class=\"article-image image-%s\"><img src=\"%s\" alt=\"\"></div>",
+//                        block.getImageAlignment(), block.getImageUrl());
+//            case QUOTE:
+//                return "<blockquote>" + block.getContent() + "</blockquote>";
+//            default:
+//                return "";
+//        }
+//    }
 
     private String formatDate(LocalDate date) {
 
