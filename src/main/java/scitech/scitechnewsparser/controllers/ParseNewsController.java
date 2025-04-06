@@ -35,7 +35,7 @@ public class ParseNewsController {
     public ResponseEntity<String> parseAndSaveNews() {
 
         List<NewsArticle> articles = null;
-        articles = parserService.parseNewsList("https://наука.рф/news",10);
+        articles = parserService.parseNewsList("https://наука.рф/news",2);
         newsService.saveArticles(articles);
         return ResponseEntity.ok("Parsed and saved " + articles.size() + " articles");
     }
