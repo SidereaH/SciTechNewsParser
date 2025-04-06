@@ -1,0 +1,31 @@
+services:
+  postgres-test-2:
+    image: postgres:15
+    container_name: postgres-test-2
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      PGDATA: /data/postgres
+    volumes:
+      - postgres-data:/data/postgres
+      - ./initdb:/docker-entrypoint-initdb.d
+  scitech-newsparser:
+    image: aliquamsiderea/scitech_newsparser:0.1.0
+    #    build: .
+    container_name: scitech-newsservice
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-test-2:5432/scitech-newsparser
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+    ports:
+      - "8084:8084"
+    depends_on:
+      - postgres-test-2
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+#  timescaledb-data:
+

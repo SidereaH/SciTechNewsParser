@@ -125,13 +125,7 @@ public class NewsParserService {
 
 
         System.out.println(text);
-//        String cleanedText = text.replace("\\", "");
-//         cleanedText = cleanedText.replace("<br>", "<br />");
 
-
-
-
-//        return HtmlWyzConverter.convertImgWyzTags(text);
 
         return text;
 //        return article;
