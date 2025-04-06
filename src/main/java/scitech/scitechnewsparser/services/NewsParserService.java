@@ -36,14 +36,13 @@ public class NewsParserService {
 
         for (Element link : links) {
             try {
-                // Получаем URL ссылки
-                String href = link.attr("abs:href"); // abs:href даст абсолютный URL
+                String href = link.attr("abs:href");
 
                 Element info = link.child(0).child(0);
                 Element infodiv = info.select("div.news-item__info").first();
                 String date = infodiv.child(0).text();
                 NewsArticle article = new NewsArticle();
-                article.setTitle(link.select(".u-news-card__title").text());
+                article.setTitle(getTitle(href));
                 article.setUrl(link.attr("href"));
                 article.setPublishDate(parseDate(date));
 
@@ -60,6 +59,10 @@ public class NewsParserService {
 
         return articles;
     }
+    private String getTitle(String articleUrl) throws IOException {
+        Document doc = Jsoup.connect(articleUrl).get();
+        return  doc.title();
+    }
 
     private String parseFullArticle(String articleUrl) throws IOException {
 
@@ -75,15 +78,21 @@ public class NewsParserService {
 //        String result = text.replace("\"\\", "");
 //        result = result.replace("\"\"", "");
 //        // Удаляем переносы строк (\n)
-//        result = result.replace("\n", "");
-        String cleanedText = text.replace("\\", "");
-         cleanedText = cleanedText.replace("<br>", "<br />");
+        text = text.replace("\n", "");
+        text = text.replace("img-wyz", "img");
+        text = text.replace("<br>", "<br/>");
+        text = text.replace("align=\"right\"", "");
+
+        System.out.println(text);
+//        String cleanedText = text.replace("\\", "");
+//         cleanedText = cleanedText.replace("<br>", "<br />");
 
 
 
 
 //        return HtmlWyzConverter.convertImgWyzTags(text);
-        return cleanedText;
+
+        return text;
 //        return article;
     }
 
@@ -95,5 +104,6 @@ public class NewsParserService {
 
         return date;
     }
+
 
 }

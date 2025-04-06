@@ -24,8 +24,7 @@ public class NewsArticle {
     private LocalDate publishDate;
     private String imageUrl;
     @Lob
+    @Column(unique = true)
     private String htmlContent;
-    @Lob
-    private String contentBlocks;
 
 }

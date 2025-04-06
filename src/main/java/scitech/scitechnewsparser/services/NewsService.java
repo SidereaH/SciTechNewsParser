@@ -33,6 +33,7 @@ public class NewsService {
         }
     }
 
+
     public List<NewsArticle> getAllArticles() {
         return articleRepository.findAll();
     }
