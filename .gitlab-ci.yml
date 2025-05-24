@@ -5,7 +5,7 @@ stages:
 
 variables:
   CI_REGISTRY: "registry.gitlab.com"
-  CI_REGISTRY_IMAGE: scitechnewsparser
+  CI_REGISTRY_PATH: scitechnewsparser
   CI_IMAGE_NAME: $CI_REGISTRY_IMAGE:latest
   IMAGE_TAG: $CI_COMMIT_SHORT_SHA
 
@@ -27,7 +27,7 @@ build:
   services:
     - docker:24.0-dind
   variables:
-    CI_REGISTRY_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH
+    CI_REGISTRY_IMAGE: $CI_REGISTRY/$CI_REGISTRY_PATH
     #CI_IMAGE_NAME: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
