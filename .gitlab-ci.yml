@@ -5,7 +5,7 @@ stages:
 
 variables:
   CI_REGISTRY: "registry.gitlab.com"
-  CI_REGISTRY_PATH: scitechnewsparser
+  CI_REGISTRY_PATH: scitech_78/scitechnewsparser
   CI_IMAGE_NAME: $CI_REGISTRY_IMAGE:latest
   IMAGE_TAG: $CI_COMMIT_SHORT_SHA
 
