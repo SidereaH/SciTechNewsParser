@@ -1,5 +1,6 @@
 package scitech.scitechnewsparser.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -25,11 +26,13 @@ import java.util.List;
 import java.util.Locale;
 
 @Service
+@Slf4j
 public class NewsParserService {
 
 
     public List<NewsArticle> parseNewsList(String url, int numOfStates, String selUrl) throws MalformedURLException {
         //количеством нам оф стейтс нажимать на показать еще чтобы появилось как можно больше ссылок на карточки
+        log.warn("Sellenium url:" + selUrl);
         ChromeOptions options = new ChromeOptions();
         options.addArguments(    "--headless",
                 "--disable-gpu",
@@ -40,6 +43,7 @@ public class NewsParserService {
                 "--disable-blink-features=AutomationControlled");
         WebDriver driver = new RemoteWebDriver(new URL(selUrl), options);
         driver.get(url);
+
         //принимаем кукисы
         WebElement okButton = driver.findElement(
                 By.xpath("//button[.//span[text()[normalize-space()='ОК']]]")
