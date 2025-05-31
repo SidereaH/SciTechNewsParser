@@ -30,12 +30,19 @@ public class ParseNewsController {
 
     @Autowired
     private NewsService newsService;
+    @Value("${sel.url:http://infra_selenium:4444/wd/hub}")
+    private String url;
 
     @GetMapping("/parse")
     public ResponseEntity<String> parseAndSaveNews() {
 
         List<NewsArticle> articles = null;
-        articles = parserService.parseNewsList("https://наука.рф/news",2);
+        try{
+            articles = parserService.parseNewsList("https://наука.рф/news",2, url);
+
+        } catch (IOException e){
+            log.error(e.getMessage());
+        }
         newsService.saveArticles(articles);
         return ResponseEntity.ok("Parsed and saved " + articles.size() + " articles");
     }
@@ -43,7 +50,12 @@ public class ParseNewsController {
     public ResponseEntity<String> parseAndSaveNewsByCountOfPages(@PathVariable int numOfPaths) {
 
         List<NewsArticle> articles = null;
-        articles = parserService.parseNewsList("https://наука.рф/news",numOfPaths);
+        try{
+        articles = parserService.parseNewsList("https://наука.рф/news",numOfPaths, url);
+        }
+            catch (IOException e){
+            log.error(e.getMessage());
+        }
         newsService.saveArticles(articles);
         return ResponseEntity.ok("Parsed and saved " + articles.size() + " articles");
     }

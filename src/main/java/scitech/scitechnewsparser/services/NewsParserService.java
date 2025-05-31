@@ -9,12 +9,15 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import scitech.scitechnewsparser.models.NewsArticle;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -25,11 +28,17 @@ import java.util.Locale;
 public class NewsParserService {
 
 
-    public List<NewsArticle> parseNewsList(String url, int numOfStates)  {
+    public List<NewsArticle> parseNewsList(String url, int numOfStates, String selUrl) throws MalformedURLException {
         //количеством нам оф стейтс нажимать на показать еще чтобы появилось как можно больше ссылок на карточки
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless", "--disable-gpu", "--no-sandbox");
-        WebDriver driver = new ChromeDriver(options);
+        options.addArguments(    "--headless",
+                "--disable-gpu",
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
+                "--window-size=1920,1080",
+                "--remote-allow-origins=*",
+                "--disable-blink-features=AutomationControlled");
+        WebDriver driver = new RemoteWebDriver(new URL(selUrl), options);
         driver.get(url);
         //принимаем кукисы
         WebElement okButton = driver.findElement(
