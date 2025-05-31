@@ -2,7 +2,7 @@ spring:
   application:
     name: SciTechNewsParser
   datasource:
-    url: jdbc:postgresql://localhost:5433/scitech_newsparser
+    url: jdbc:postgresql://localhost:5435/scitech_newsparser
     username: "postgres"
     password: "postgres"
     driver-class-name: org.postgresql.Driver
@@ -16,3 +16,5 @@ server:
 news:
   service:
     url: http://localhost:8083/api/news/list
+sel:
+  url: http://localhost:8084/api/news/list

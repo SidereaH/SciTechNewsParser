@@ -15,7 +15,7 @@ services:
     #    build: .
     container_name: scitech-newsservice
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-test-2:5432/scitech-newsparser
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-test-2:5435/scitech-newsparser
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
