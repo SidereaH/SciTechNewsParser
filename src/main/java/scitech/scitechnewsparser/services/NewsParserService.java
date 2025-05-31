@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -26,7 +27,9 @@ public class NewsParserService {
 
     public List<NewsArticle> parseNewsList(String url, int numOfStates)  {
         //количеством нам оф стейтс нажимать на показать еще чтобы появилось как можно больше ссылок на карточки
-        WebDriver driver = new ChromeDriver();
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--disable-gpu", "--no-sandbox");
+        WebDriver driver = new ChromeDriver(options);
         driver.get(url);
         //принимаем кукисы
         WebElement okButton = driver.findElement(
