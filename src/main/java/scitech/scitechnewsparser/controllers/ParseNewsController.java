@@ -31,14 +31,14 @@ public class ParseNewsController {
     @Autowired
     private NewsService newsService;
     @Value("${sel.url:http://infra_selenium:4444/wd/hub}")
-    private String url;
+    private String SEL_URL;
 
     @GetMapping("/parse")
     public ResponseEntity<String> parseAndSaveNews() {
 
         List<NewsArticle> articles = null;
         try{
-            articles = parserService.parseNewsList("https://наука.рф/news",2, url);
+            articles = parserService.parseNewsList("https://наука.рф/news",2, SEL_URL);
 
         } catch (IOException e){
             log.error(e.getMessage());
@@ -51,7 +51,7 @@ public class ParseNewsController {
 
         List<NewsArticle> articles = null;
         try{
-        articles = parserService.parseNewsList("https://наука.рф/news",numOfPaths, url);
+        articles = parserService.parseNewsList("https://наука.рф/news",numOfPaths, SEL_URL);
         }
             catch (IOException e){
             log.error(e.getMessage());
@@ -69,7 +69,7 @@ public class ParseNewsController {
     @Autowired
     private RestTemplate restTemplate; // Добавьте этот бин в ваш конфиг
     @Value("${news.service.url}")
-    private String NEWS_SERVICE_URL; // Укажите правильный URL
+    private String NEWS_SERVICE_URL;
 
     @PostMapping("/send-to-news-service")
     public ResponseEntity<Map<String, Object>> sendAllNewsToNewsService() {
